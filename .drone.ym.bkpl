@@ -1,0 +1,27 @@
+kind: pipeline
+name: default
+
+steps:
+- name: test
+  image: alpine
+  commands:
+  - echo hello
+  - echo world
+  - ls /var/lib/drone
+
+- name: build
+  image: golang
+  commands:
+    - go build -o hello
+    - ./hello
+
+- name: test
+  image: alpine:3.6
+  volumes:
+    - custom:/foo
+  commands:
+    - echo hello world
+
+volumes:
+  custom:
+    driver: local

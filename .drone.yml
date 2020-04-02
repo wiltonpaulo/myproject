@@ -1,0 +1,39 @@
+kind: pipeline
+name: default
+
+steps:
+- name: restore
+  image: plugins/s3-cache
+  settings:
+    pull: true
+    root: drone-volume
+    endpoint: https://s3.fr-par.scw.cloud
+    region: "fr-par"
+    access_key:
+      from_secret: aws_access_key_id
+    secret_key:
+      from_secret: aws_secret_access_key
+    restore: true
+
+- name: build
+  image: node
+  commands:
+  - 'echo ''{"devDependencies": {"@angular/cli": "^7.3.3" }}'' > package.json'
+  - npm install
+
+- name: rebuild
+  image: plugins/s3-cache
+  settings:
+    pull: true
+    root: drone-volume
+    endpoint: https://s3.fr-par.scw.cloud
+    region: "fr-par"
+    access_key:
+      from_secret: aws_access_key_id
+    secret_key:
+      from_secret: aws_secret_access_key
+    rebuild: true
+    mount:
+      - node_modules
+    when:
+      event: push

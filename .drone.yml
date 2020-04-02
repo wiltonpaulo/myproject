@@ -8,6 +8,9 @@ steps:
   commands:
   - echo hello
   - echo world
+  - pwd
+  - ls
+  - df
 
 - name: build
   image: golang
